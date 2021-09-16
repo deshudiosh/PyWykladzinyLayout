@@ -1,1 +1,0 @@
-('C:\\Users\\pawelgrze\\Desktop\\tQ0WAjJ.jpg', 'C:\\Users\\pawelgrze\\Desktop\\VrayZdepthCalculator.exr')

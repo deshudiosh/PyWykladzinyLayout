@@ -44,8 +44,9 @@ def process_image(p: Path):
         text.text((10, layout.height - text_size * 1.2), p.stem, font=ImageFont.truetype("arial.ttf", text_size),
                   fill=(255, 255, 255), stroke_fill=(0, 0, 0), stroke_width=5)
 
+
         layout_path = Path(p.parent / (p.stem + "_layout" + p.suffix))
-        layout.save(layout_path)
+        layout.save(layout_path, optimize=True, quality=60)
 
 
 @click.command()
@@ -56,7 +57,10 @@ def cli(args):
     images = [validate_image(arg) for arg in args if validate_image(arg) is not None]
     [process_image(img) for img in images]
 
-    # click.confirm('Cropping done ♥ Happy?')
+    if len(images) == 0:
+        click.echo(args)
+
+    click.confirm('♥♥♥♥♥♥♥♥♥♥?')
 
 
 def test():
