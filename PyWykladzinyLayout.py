@@ -1,9 +1,14 @@
 import sys
 from pathlib import Path
+from tkinter import messagebox
 
 import click
 from PIL import Image, ImageOps, ImageDraw, ImageFont
 
+from tkinterdnd2 import TkinterDnD, DND_FILES
+import tkinter as tk
+
+tbox = None
 
 def validate_image(arg) -> Path:
     """ Return if arg is existing file and is jpg or png"""
@@ -49,23 +54,46 @@ def process_image(p: Path):
         layout.save(layout_path, optimize=True, quality=60)
 
 
+class TkWindow:
+    def __init__(self):
+        self.window = TkinterDnD.Tk()
+        self.window.title("Wykladzina Layout")
+        self.window.resizable(0,0)
+        self.window.attributes("-toolwindow", 1)
+        self.window.geometry("200x100")
+        self.tbox = tk.Listbox(self.window, selectmode=tk.SINGLE, background="#ffe0d6")
+        self.tbox.pack(fill=tk.BOTH)
+        self.tbox.drop_target_register(DND_FILES)
+        self.tbox.dnd_bind('<<Drop>>', self.tk_files_dropped)
+        self.window.mainloop()
+
+    def tk_files_dropped(self, event):
+        files = str(event.data).split("} {")
+        files = [file.replace('}', '').replace('{', '') for file in files]
+        # print(files)
+        # start(files)
+        messagebox.showinfo("x", event.data)
+
+
+def start(args):
+    if len(args) == 0:
+        tkw = TkWindow()
+    else:
+        images = [validate_image(arg) for arg in args if validate_image(arg) is not None]
+        [process_image(img) for img in images]
+
+
 @click.command()
 @click.argument("args", nargs=-1)
 def cli(args):
-    click.echo("List of cropped images:")
-
-    images = [validate_image(arg) for arg in args if validate_image(arg) is not None]
-    [process_image(img) for img in images]
-
-    if len(images) == 0:
-        click.echo(args)
-
-    click.confirm('♥♥♥♥♥♥♥♥♥♥?')
+    start(args)
+    # click.confirm('♥♥♥♥♥♥♥♥♥♥?')
 
 
 def test():
-    images = [Path(r'X:\!Budynki-Xrefy\Warsaw Spire\3d\smieci\WYKLADZINY\2021.09.10 piasek\PIASEK5.jpg')]
-    [process_image(img) for img in images]
+    args = [r'X:\!Budynki-Xrefy\Warsaw Spire\3d\smieci\WYKLADZINY\2021.09.10 piasek\PIASEK5.jpg']
+    # start(args)
+    start([])
 
 
 if getattr(sys, "frozen", False):
