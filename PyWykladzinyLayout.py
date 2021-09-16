@@ -93,7 +93,7 @@ def cli(args):
 def test():
     args = [r'X:\!Budynki-Xrefy\Warsaw Spire\3d\smieci\WYKLADZINY\2021.09.10 piasek\PIASEK5.jpg']
     # start(args)
-    start([])
+    start([])  # force tkinter app run
 
 
 if getattr(sys, "frozen", False):
