@@ -2,39 +2,7 @@ import sys
 from pathlib import Path
 
 import click
-from PIL import Image
-
-
-def find_size_in_name(name: Path):
-    """" search for WWWxHHH in filename and return as tuple"""
-    try:
-        n = name.stem
-        extracted = [c if c in "1234567890x" else " " for c in n]
-        extracted = "".join(extracted).split()
-        extracted = [x for x in extracted if "x" in x]
-        extracted = extracted[0]
-
-        size = extracted.split("x")
-        size = tuple(map(int, size))
-        assert len(size) == 2
-    except:
-        size = None
-
-    return size
-
-
-def crop_if_needed(arg: Path):
-    """ Apply crop to image based on filename template: "filename_WWWxHHH.ext" """
-    expected_size = find_size_in_name(arg)
-    img = Image.open(arg) # type: Image.Image
-
-    # if image size doesn't match it's name
-    if expected_size != img.size and expected_size is not None:
-        img.crop((0, 0, *expected_size)).save(fp=arg, subsampling=0, quality=100)
-        click.echo(arg)
-        return img
-    else:
-        return None
+from PIL import Image, ImageOps, ImageDraw, ImageFont
 
 
 def validate_image(arg) -> Path:
@@ -43,20 +11,57 @@ def validate_image(arg) -> Path:
     return p if p.is_file() and p.suffix in ['.jpg', '.png'] else None
 
 
+def process_image(p: Path):
+    if validate_image(p) is None:
+        return
+
+    a_path = Path(p.parent / (p.stem + 'a' + p.suffix))
+    b_path = Path(p.parent / (p.stem + 'b' + p.suffix))
+
+    if validate_image(a_path) and validate_image(b_path):
+        layout = Image.new('RGB', (3840, 2160), (255,255,255))
+
+        b = 5  # border
+        b2 = b*2
+
+        rug = Image.open(p)
+        rug = ImageOps.fit(rug, (1920-b2, 2160-b2))
+        rug = ImageOps.expand(rug, border=b, fill='white')
+        layout.paste(rug, box=(0, 0))
+
+        aimg = Image.open(a_path)
+        aimg = ImageOps.fit(aimg, (1920-b2, 1080-b2))
+        aimg = ImageOps.expand(aimg, border=b, fill='white')
+        layout.paste(aimg, box=(1920, 0))
+
+        bimg = Image.open(b_path)
+        bimg = ImageOps.fit(bimg, (1920-b2, 1080-b2))
+        bimg = ImageOps.expand(bimg, border=b, fill='white')
+        layout.paste(bimg, box=(1920, 1080))
+
+        text = ImageDraw.Draw(layout)
+        text_size = 80
+        text.text((10, layout.height - text_size * 1.2), p.stem, font=ImageFont.truetype("arial.ttf", text_size),
+                  fill=(255, 255, 255), stroke_fill=(0, 0, 0), stroke_width=5)
+
+        layout_path = Path(p.parent / (p.stem + "_layout" + p.suffix))
+        layout.save(layout_path)
+
+
 @click.command()
 @click.argument("args", nargs=-1)
 def cli(args):
     click.echo("List of cropped images:")
 
     images = [validate_image(arg) for arg in args if validate_image(arg) is not None]
-    [crop_if_needed(img) for img in images]
+    [process_image(img) for img in images]
 
-    click.confirm('Cropping done ♥ Happy?')
+    # click.confirm('Cropping done ♥ Happy?')
 
 
 def test():
-    for n in [Path(r'X:\!Budynki-Xrefy\Warsaw Spire\3d\smieci\WYKLADZINY\2021.09.10 piasek\PIASEK5.jpg')]:
-        print(find_size_in_name(n))
+    images = [Path(r'X:\!Budynki-Xrefy\Warsaw Spire\3d\smieci\WYKLADZINY\2021.09.10 piasek\PIASEK5.jpg')]
+    [process_image(img) for img in images]
 
 
 if getattr(sys, "frozen", False):

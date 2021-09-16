@@ -1,2 +1,2 @@
 call "./venv/Scripts/activate"
-pyinstaller PyFixImageSize.spec --onefile
+pyinstaller PyWykladzinyLayout.spec --onefile
