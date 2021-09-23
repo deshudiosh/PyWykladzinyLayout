@@ -1,2 +1,3 @@
 call "./venv/Scripts/activate"
-pyinstaller PyWykladzinyLayout.spec --onefile --additional-hooks-dir=.
+pyinstaller --onefile -w PyWykladzinyLayout.spec --additional-hooks-dir=.
+pause
