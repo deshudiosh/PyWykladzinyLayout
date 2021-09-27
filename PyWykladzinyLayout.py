@@ -23,7 +23,7 @@ def process_image(p: Path):
     b_path = Path(p.parent / (p.stem + 'b' + p.suffix))
 
     if validate_image(a_path) and validate_image(b_path):
-        layout = Image.new('RGB', (3840, 2160), (255,255,255))
+        layout = Image.new('RGB', (3840, 2160), (255, 255, 255))
 
         b = 5  # border
         b2 = b*2
