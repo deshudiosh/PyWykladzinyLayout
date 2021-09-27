@@ -8,7 +8,6 @@ from PIL import Image, ImageOps, ImageDraw, ImageFont
 from tkinterdnd2 import TkinterDnD, DND_FILES
 import tkinter as tk
 
-tbox = None
 
 def validate_image(arg) -> Path:
     """ Return if arg is existing file and is jpg or png"""
@@ -67,8 +66,8 @@ class TkWindow:
         self.window.mainloop()
 
     def tk_files_dropped(self, event):
-        files = str(event.data).split("} {")
-        files = [file.replace('}', '').replace('{', '') for file in files]
+        # files = str(event.data).split("} {")
+        # files = [file.replace('}', '').replace('{', '') for file in files]
         # print(files)
         # start(files)
         messagebox.showinfo("x", event.data)
@@ -90,14 +89,11 @@ def cli(args):
 
 
 def test():
-    args = [r'X:\!Budynki-Xrefy\Warsaw Spire\3d\smieci\WYKLADZINY\2021.09.10 piasek\PIASEK5.jpg']
-    # start(args)
+    # start([r'X:\!Budynki-Xrefy\Warsaw Spire\3d\smieci\WYKLADZINY\2021.09.10 piasek\PIASEK5.jpg'])
     start([])  # force tkinter app run
 
 
-if getattr(sys, "frozen", False):
+if getattr(sys, "frozen", False):  # if frozen with pyinstaller
     cli()
-else:
-    # tests are run only if app is not frozen
+else:  # tests are run only if app is not frozen
     test()
-    pass
