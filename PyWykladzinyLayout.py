@@ -57,7 +57,8 @@ def process_image(p: Path):
 
         text = ImageDraw.Draw(layout)
         text_size = 80
-        text.text((10, layout.height - text_size * 1.2), p.stem, font=ImageFont.truetype("arial.ttf", text_size),
+        text.text((10, layout.height - text_size * 1.2), tex_path.stem + scale,
+                  font=ImageFont.truetype("arial.ttf", text_size),
                   fill=(255, 255, 255), stroke_fill=(0, 0, 0), stroke_width=5)
 
         layout_path = Path(p.parent / (tex_path.stem + scale + "_layout" + p.suffix))
@@ -102,13 +103,8 @@ def cli(args):
 
 
 def test():
-    # start([r'X:\!Budynki-Xrefy\Warsaw Spire\3d\smieci\WYKLADZINY\2021.10.12 grz bumps\bumps_linie1a.jpg',
-    #        r'X:\!Budynki-Xrefy\Warsaw Spire\3d\smieci\WYKLADZINY\2021.10.12 grz bumps\bumps_linie1b.jpg',
-    #        r'X:\!Budynki-Xrefy\Warsaw Spire\3d\smieci\WYKLADZINY\2021.10.12 grz bumps\bumps_linie1_scale2a.jpg',
-    #        r'X:\!Budynki-Xrefy\Warsaw Spire\3d\smieci\WYKLADZINY\2021.10.12 grz bumps\bumps_linie1_scale2b.jpg',
-    #        r'X:\!Budynki-Xrefy\Warsaw Spire\3d\smieci\WYKLADZINY\2021.10.12 grz bumps\bumps_brick1_scale1b.jpg',
-    #        r'X:\!Budynki-Xrefy\Warsaw Spire\3d\smieci\WYKLADZINY\2021.10.12 grz bumps\bumps_brick1_scale2a.jpg'])
-    start([])  # force tkinter window app run
+    start([r'X:\!Budynki-Xrefy\Warsaw Spire\3d\smieci\WYKLADZINY\2021.10.15 anemone\anemone1_color1_scale2a.jpg'])
+    # start([])  # force tkinter window app run
 
 
 if getattr(sys, "frozen", False):  # if frozen with pyinstaller
