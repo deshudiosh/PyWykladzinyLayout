@@ -24,10 +24,10 @@ exe = EXE(pyz,
           a.binaries,
           a.zipfiles,
           a.datas,
-          name='WykladzinyLayout',
+          name='Make Layouts',
           debug=False,
           strip=False,
           upx=True,
           runtime_tmpdir=None,
           console=True,
-		  icon="icon.ico")
+		  icon="layout_icon.ico")

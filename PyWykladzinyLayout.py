@@ -1,12 +1,10 @@
 import sys
 from pathlib import Path
-from tkinter import messagebox
 
 import click
 from PIL import Image, ImageOps, ImageDraw, ImageFont
 
-from tkinterdnd2 import TkinterDnD, DND_FILES
-import tkinter as tk
+import wx
 
 
 def valid_image(arg) -> Path:
@@ -65,31 +63,27 @@ def process_image(p: Path):
         layout.save(layout_path, optimize=True, quality=60)
 
 
-# TODO: CAN"T MAKE THIS SHIT TO WORK WHEN FROZEN WITH PYINSTALLER!
-class TkWindow:
-    def __init__(self):
-        self.window = TkinterDnD.Tk()
-        self.window.title("Wykladzina Layout")
-        self.window.resizable(0,0)
-        self.window.attributes("-toolwindow", 1)
-        self.window.geometry("200x100")
-        self.tbox = tk.Listbox(self.window, selectmode=tk.SINGLE, background="#ffe0d6")
-        self.tbox.pack(fill=tk.BOTH)
-        self.tbox.drop_target_register(DND_FILES)
-        self.tbox.dnd_bind('<<Drop>>', self.tk_files_dropped)
-        self.window.mainloop()
+class WxApp(wx.App):
+    class DropTarget(wx.FileDropTarget):
+        def OnDropFiles(self, x, y, filenames):
+            start(filenames)
+            return True
 
-    def tk_files_dropped(self, event):
-        # files = str(event.data).split("} {")
-        # files = [file.replace('}', '').replace('{', '') for file in files]
-        # print(files)
-        # start(files)
-        messagebox.showinfo("x", event.data)
+    def __init__(self):
+        wx.App.__init__(self)
+        style = wx.CAPTION | wx.CLOSE_BOX | wx.STAY_ON_TOP
+        self.frame = wx.Frame(None, title='Make Layouts', size=(160, 65), style=style)
+        self.frame.SetIcon(wx.Icon("./layout_icon.ico"))
+        self.panel = wx.Panel(self.frame)
+        self.label = wx.StaticText(self.panel, label='drop renders here', pos=(24, 5))
+        self.label.SetDropTarget(self.DropTarget())
+        self.frame.Center()
+        self.frame.Show()
 
 
 def start(args):
     if len(args) == 0:
-        tkw = TkWindow()
+        WxApp().MainLoop()
     else:
         images = [valid_image(arg) for arg in args if valid_image(arg) is not None]
         [process_image(img) for img in images]
@@ -98,13 +92,15 @@ def start(args):
 @click.command()
 @click.argument("args", nargs=-1)
 def cli(args):
+    # with open("parameters.log", "ab") as f:
+    #     f.write(str(sys.argv))
     start(args)
     # click.confirm('♥♥♥♥♥♥♥♥♥♥?')
 
 
 def test():
-    start([r'X:\!Budynki-Xrefy\Warsaw Spire\3d\smieci\WYKLADZINY\2021.10.15 anemone\anemone1_color1_scale2a.jpg'])
-    # start([])  # force tkinter window app run
+    # start([r'X:\!Budynki-Xrefy\Warsaw Spire\3d\smieci\WYKLADZINY\2021.10.15 anemone\anemone1_color1_scale2a.jpg'])
+    start([])  # force window app run
 
 
 if getattr(sys, "frozen", False):  # if frozen with pyinstaller
