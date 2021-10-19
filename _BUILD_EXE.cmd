@@ -1,5 +1,5 @@
 call "./venv/Scripts/activate"
-pyinstaller --onefile -w PyWykladzinyLayout.spec --additional-hooks-dir=. --collect-all tkinterdnd2
+pyinstaller --onefile --noconsole -w PyWykladzinyLayout.spec
 
 rmdir build /s /q
 rmdir dist /s /q
